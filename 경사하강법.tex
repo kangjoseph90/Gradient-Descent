@@ -166,9 +166,22 @@ $$
 
 앞의 정리는 곡선이 수렴하는 점은 임계점임을 말해주지만, 그것이 극소점임을 말해주진 않는다. 	하지만 '좋은' 조건이 주어진다면 그러한 임계점이 극소점임을 알 수 있다.
 
+\newpage
 \begin{definition}
 함수 $f$가 정의역의 임의의 점 $A,B$와 $0\leq \lambda \leq 1$에 대해 \\ $f(\lambda A + (1-\lambda) B) \leq \lambda f(A) + (1-\lambda) f(B)$를 만족시키면 $f$를 \textbf{볼록(convex)함수} 라고 한다.
 \end{definition}
+
+\begin{lemma}
+다변수 볼록함수 $f$와 벡터 $\mathbf{P},\mathbf{v}$에 대해 $g(t)=f(\mathbf{P}+t\mathbf{v})$는 볼록함수이다.
+\end{lemma}
+\begin{proof}
+임의의 $a<b, 0\leq\lambda\leq 1$에 대해서 
+\begin{align*}
+g(\lambda a+(1-\lambda) b)&=f(\mathbf{P}+\lambda a\mathbf{v}+(1-\lambda) b\mathbf{v})\\&=f(\lambda(\mathbf{P}+a\mathbf{v})+(1-\lambda)(\mathbf{P}+b\mathbf{v}))\\&\leq\lambda f(\mathbf{P}+a\mathbf{v})+(1-\lambda)f(\mathbf{P}+b\mathbf{v})\\&=\lambda g(a)+(1-\lambda) g(b)
+\end{align*}
+따라서 $g$는 볼록함수이다.
+\end{proof}
+
 
 \begin{lemma}
 일변수 일급 함수 $f$가 볼록함수이면 $f^{\prime}$은 단조 증가한다.
@@ -181,26 +194,32 @@ f(c)&\leq\frac{c-b}{a-b}f(a)+\frac{a-c}{a-b}f(b) \\
 \end{align*}
 이제 $c$를 $a,b$로 보내면 $f$가 미분 가능이므로 각각 $f^{\prime}(a),f^{\prime}(b)$로 수렴하고, 위의 부등식에 의해 증명이 완료된다.
 $$f^{\prime}(a)\leq\frac{f(b)-f(a)}{b-a}\leq f^{\prime}(b)$$
-
 \end{proof}
 
+\newpage
 \begin{theorem}
-다변수 일급 함수 $f$가 볼록함수이고 $\nabla f(\mathbf{P})=\mathbf{0}$이라면 $f$는 $\mathbf{P}$에서 극소이다.
+다변수 일급 함수 $f$가 볼록함수이면 임의의 벡터 $\mathbf{P},\mathbf{v}$에 대해 $\nabla f(\mathbf{P})\cdot \mathbf{v}=D_{\mathbf{v}}f(\mathbf{P})\leq f(\mathbf{P}+\mathbf{v})-f(\mathbf{P})$이다.
 \end{theorem}
 \begin{proof}
-임의의 벡터 $\mathbf{v}$에 대해 $g(t)=f(\mathbf{P}+t\mathbf{v})$라고 하자. $f$가 볼록함수이므로 다음이 성립한다.
+Lemma 3.5. 에 의해 $g(t)=f(\mathbf{P}+t\mathbf{v})$가 볼록함수 임을 알고, 위의 부등식에 의해 다음이 성립하므로 증명이 완료된다.
+$$
+D_{\mathbf{v}}f(P)=g^{\prime}(0)\leq\frac{g(1)-g(0)}{1-0}=f(\mathbf{P}+\mathbf{v})-f(\mathbf{P})
+$$
+\end{proof}
+
+\begin{corollary}
+다변수 일급 함수 $f$가 볼록함수이고 $\nabla f(\mathbf{P})=\mathbf{0}$이라면 $f$는 $\mathbf{P}$에서 극소이다.
+\end{corollary}
+\begin{proof}
+임의의 벡터 $\mathbf{v}$에 대해 $g(t)=f(\mathbf{P}+t\mathbf{v})$라고 하자. 
 \begin{align*}
-g(\lambda a+(1-\lambda) b)&=f(\mathbf{P}+\lambda a\mathbf{v}+(1-\lambda) b\mathbf{v})\\&=f(\lambda(\mathbf{P}+a\mathbf{v})+(1-\lambda)(\mathbf{P}+b\mathbf{v}))\\&\leq\lambda f(\mathbf{P}+a\mathbf{v})+(1-\lambda)f(\mathbf{P}+b\mathbf{v})\\&=\lambda g(a)+(1-\lambda) g(b)
+\nabla f(\mathbf{P})\cdot\mathbf{v}=0&\leq f(\mathbf{P}+\mathbf{v})-f(\mathbf{P}) \\ f(\mathbf{P})&\leq f(\mathbf{P}+\mathbf{v})
 \end{align*}
-따라서 $g$는 볼록함수이다. 
-$$g^{\prime}(0)=D_{\mathbf{v}}f(\mathbf{P})=\nabla f(\mathbf{P})\cdot\mathbf{v}=0$$
-$g^{\prime}(0)=0$이고 볼록함수이기 때문에 Lemma 3.5.에 의해 $(0,1)$에서 $g^{\prime}\geq 0$이다.
-$f(\mathbf{P}+\mathbf{v})=g(1), f(\mathbf{P})=g(0)$이므로 평균값 정리를 적용하면 증명이 완료된다.
-$$\xi \in (0,1) \qquad f(\mathbf{P}+\mathbf{v})-f(\mathbf{P})=g(1)-g(0)=g^{\prime}(\xi)\geq 0 $$
+이므로 f는 $\mathbf{P}$에서 극소이다.
 \end{proof}
 
 
-Theorem 3.2. Theorem 3.6. 그리고 Remark.에서 다룬 내용들을 종합하면 다음과 같은 정리를 얻는다.
+Theorem 3.2. Corollary 3.7.1. 그리고 Remark.에서 다룬 내용들을 종합하면 다음과 같은 정리를 얻는다.
 \begin{theorem}
 $\|H(\mathcal{L})\|_{op}, \|\nabla\mathcal{L}\|$이 유계인 이급 볼록함수 $\mathcal{L}$에서 $\curve$가 수렴한다면, 그 점은 극소점이다.
 \end{theorem}
