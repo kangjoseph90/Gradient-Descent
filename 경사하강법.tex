@@ -1,0 +1,233 @@
+
+%!TEX encoding=utf-8 
+
+\documentclass[a4paper,20pt]{article}
+
+\usepackage{xetexko}
+\usepackage{amsfonts}
+\usepackage{setspace}
+\usepackage{amsthm}
+\usepackage{amsmath}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{remark}{Remark}
+
+
+\setstretch{1.6}
+
+\newcommand{\limit}[2][\infty]{\lim_{#2 \to #1}}
+\newcommand{\curve}[1][X]{\tilde{\mathbf{#1}}}
+
+\begin{document}
+
+\title{\LARGE{경사하강법}}
+\author{강요셉}
+\date{\today}
+\maketitle
+\pagenumbering{roman}
+\* 이 글은 \LaTeX에서 작성됨
+
+\newpage
+
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+\section{Introduction}
+머신러닝, 수치해석 등 여러 컴퓨팅 분야에서는 어떤 목적함수(objective function)의 함수값을
+최적화(optimization)하는 방법에 대해 연구한다. 이런 최적화 문제에서 대표적인 해결 방법으로 \textbf{경사하강법 (Gradient Descent)}이 제시된다. 
+\\\\
+이 글에서는 경사하강법의 원리와 타탕성을 다변수 해석학을 통해 이해/증명하고, 그에 따른 또다른 방법론을 제시한다.
+
+	\subsection{List of special symbols}
+	\begin{tabular}{llll}
+	$\nabla f$ & 기울기 벡터 & $\mathbb{R}$ & 실수 집합 \\ 
+	$\mathbf{0}$ & 영벡터 & $\int_{\mathbf{X}}$ & 선적분 \\
+	$|\cdot |$ & 절댓값 노름 & $\| \cdot \|$ & 벡터 노름 \\
+	$\| \cdot \|_{op}$ & 행렬 Operator 노름 & $H(f)$ & 헤세 행렬 \\
+	\end{tabular}
+\\\\
+\section{Method}
+
+$n$-공간에서 정의된 다변수 일급 함수 $\mathcal{L}:\mathbb{R}^{n}\rightarrow\mathbb{R}, \mathbf{X}\mapsto\mathcal{L}(\mathbf{X})$
+의 값을 최소로 만드는 최소점 $\mathbf{X}$를 찾는 문제를 생각해 보자. 임계점 정리에 의하면, $\mathcal{L}$의 최소점은 다음을 만족한다.
+$$\nabla\mathcal{L}(\mathbf{X})=\mathbf{0}$$ 
+
+경사하강법은 변수의 초기값 $\mathbf{X}_{0}$에서 시작해 기울기 벡터에 비례해 변수를 이동시키며 나타나는 수열 $\{ \mathbf{X}_{n}\}$을 통해 최소점을 구한다. 
+$$\mathbf{X}_{n+1}=\mathbf{X}_{n}-\alpha(\nabla\mathcal{L}(\mathbf{X}_{n}))$$
+이제 이러한 수열을 다음을 만족시키는 일급 곡선으로 생각해 본다.
+$$\mathbf{X}(0)=\mathbf{X}_{0} \qquad \mathbf{X}(n\alpha)=\mathbf{X}_{n}$$
+만약 $\alpha$ 가 충분히 작다면, $\frac{\mathbf{X}(t+\alpha)-\mathbf{X}(t)}{\alpha} = \mathbf{X}^{\prime}(t)+ \frac{\mathbf{o}(\alpha)}{\alpha}=-\nabla\mathcal{L}(\mathbf{X}(t))$ 이므로
+곡선 $\mathbf{X}$는 아래의 미분방정식을 만족시키는 일급 적분곡선 
+$\curve$에 수렴하게 된다.
+$$ \curve(0)=\mathbf{X}_{0} \qquad \curve^{\prime}=-\nabla\mathcal{L}(\curve) $$
+
+선택한 $\alpha$가 아주 작다는 가정 하에, 이 곡선을 관찰함으로써 수열 $\{\mathbf{X}_{n}\}$의 행동을 관찰할 수 있다. 앞으로는 이 곡선을 관찰함으로써 특수한 조건을 만족하는 함수에서는 이 곡선이 함수의 극소점으로 수렴함을 보인다.
+
+\section{Observation}
+
+\begin{theorem}
+$\mathcal{L}(\curve(t))$는 단조 감소한다.
+\end{theorem}
+
+\begin{proof}
+$[t_{1},t_{2}]$에서 정의된 곡선 $\mathbf{Y}$를 $\mathbf{Y}=\curve$이라 할 때, 선적분의 기본정리에 의해
+$$ 
+\mathcal{L}(\curve(t_{2})-\mathcal{L}(\curve(t_{1}))
+= \int_\mathbf{Y} \nabla\mathcal{L} \cdot d\mathbf{s}=\int_{t_{1}}^{t_{2}}-\| \nabla \mathcal{L} \|^{2} dt \leq 0  
+$$
+따라서 $\mathcal{L}(\curve(t_{1}))\geq\mathcal{L}(\curve(t_{2}))$ 이다. 
+\end{proof}
+
+이 성질은 곡선 $\curve$를 따라갈 때 함숫값이 줄어든다는 것을 보장해 주지만, 실제로 이 곡선이 함수의 극소점을 찾는것에 도움을 주는가에 대한 
+질문에 답하진 못한다. 다음 명제는 일단 곡선이 수렴한다면 임계점으로 수렴하는가에 답하기 위해 떠올린 명제이다.		
+\\\\
+(거짓) 어떤 $\mathbf{P}$에 대해서 $\limit{t}\curve(t)=\mathbf{P}$ 이면 
+$\limit{t}\curve^{\prime}(t)=\mathbf{0}$이다. \\
+반례) 편의를 위해 $n=1$로 둔다. $\curve(t)=\frac{\sin t^{2}}{t}$일때, $\limit{t}\curve(t)=0$ 이지만 
+$\limit{t}\curve^{\prime}(t)=\limit{t}(2\cos x^{2}-\frac{\sin x^{2}}{x^{2}})$은 수렴하지 않는다.
+\\\\
+이는 곡선 $\curve$가 일반적으로는 임계점으로 수렴하지 않음을 나타내지만, 만약 $\curve$가 한가지 조건을 만족한다면 참으로 만들 수 있다.
+\\\\
+(여기서부터는 $\curve^{\prime \prime}$에 대해 다룰것이므로 함수 $\mathcal{L}$이 이급 함수임을 추가로 가정한다.)
+\begin{theorem}
+$\limit{t} \curve(t)=\mathbf{P}$이고 $\|\curve^{\prime \prime}\|\leq M$이면 
+$\limit{t}\curve^{\prime}(t)=\mathbf{0}$이다.
+\end{theorem}
+
+이 정리를 증명하기 앞서 한가지 도움정리를 다룬다.
+
+\begin{lemma}
+이급 실함수 $f$에 대해 $|f| \leq M_{0}, |f^{\prime \prime}| \leq M_{2} $이면 $|f^{\prime}| \leq 2\sqrt{M_{0}M_{2}}$이다.
+\end{lemma}
+
+\begin{proof}
+테일러 정리에 의해 임의의 $h>0, t$에 대해 다음을 만족한다.
+\begin{eqnarray*}
+\xi \in (t,t+2h) \qquad f(t+2h)=f(t)+2hf^{\prime}(t)+2h^{2}f^{\prime \prime}(\xi) \\
+f^{\prime}(t)=\frac{f(t+2h)-f(t)}{2h}-hf^{\prime \prime}(\xi)
+\end{eqnarray*}
+따라서 다음의 부등식을 얻는다.
+$$
+|f(t)|\leq \frac{M_{0}}{h}+hM_{2}
+$$
+이제 $h=\sqrt{\frac{M_{2}}{M_{0}}}$을 대입하면 원하는 결과를 얻는다.
+$$
+|f|\leq 2\sqrt{M_{0}M_{2}}
+$$
+\end{proof}
+이 정리는 벡터 함수, 즉 곡선에서도 성립한다.
+\begin{lemma}
+이급 벡터 함수 $\mathbf{f}$에 대해 $\|\mathbf{f}\| \leq M_{0}, \|\mathbf{f}^{\prime \prime}\| \leq M_{2} $이면 
+$\|\mathbf{f}^{\prime}\| \leq 2\sqrt{M_{0}M_{2}}$이다. 
+\end{lemma}
+\begin{proof}
+임의의 실수 $t_{0}$에 대해서 $\mathbf{n}=\frac{1}{\|\mathbf{f^{\prime}}(t_{0})\|}\mathbf{f^{\prime}}(t_0)$이라 하자. 
+$\mathbf{f}^{\prime}(t_{0})\cdot\mathbf{n}=\|\mathbf{f}^{\prime}(t_{0})\|$이고, $\|\mathbf{n}\|$=1이므로 코시-슈바르츠 부등식에 의해 
+$|\mathbf{f}\cdot\mathbf{n}|\leq M_{0}, |\mathbf{f}^{\prime \prime}\cdot\mathbf{n}|\leq M_{2}$이다. 
+이제 $\mathbf{f}\cdot\mathbf{n}$은 실함수 이므로 앞의 정리를 적용하면 다음이 성립한다.
+$$
+\|\mathbf{f}^{\prime}(t_{0})\|\leq 2\sqrt{M_{0}M_{2}}
+$$
+$t_{0}$이 임의의 실수였으므로 원하는 결론을 얻는다.		
+\end{proof}
+
+\newpage
+이제 Theorem 3.2. 를 증명한다. 
+\begin{proof}
+$\limit{t}\curve(t)=0$이므로 임의의 양수 $\epsilon$에 대해서 
+$(N,\infty)$에서 $\|\curve\|\leq \frac{\epsilon^{2}}{4M}$인 N이 존재한다. 앞의 정리에 의해서 $(N,\infty)$에서는 $\|\curve^{\prime}\|\leq2\sqrt{(\frac{\epsilon^{2}}{4M}) M}=\epsilon$이므로 $\limit{t}\curve^{\prime}(t)=0$이다.
+\end{proof}
+
+\begin{remark}
+미분방정식 $\curve^{\prime}=-\nabla\mathcal{L}(\curve)$을 t에 대해 미분하면
+$$
+\curve^{\prime \prime}= -\left[ 
+	\begin{array}{ccc}
+	\frac{\partial^{2}\mathcal{L}}{\partial x_{1}^{2}} & \ldots & \frac{\partial^{2}\mathcal{L}}{\partial x_{n} \partial x_{1}} \\
+	\vdots & \ddots & \vdots \\
+	\frac{\partial^{2}\mathcal{L}}{\partial x_{1} \partial x_{n}} & \ldots & \frac{\partial^{2}\mathcal{L}}{\partial x_{n}^{2}} \\
+	\end{array}
+\right] (\curve^{\prime})
+=H(\mathcal{L})(\nabla\mathcal{L})
+$$
+($H(\mathcal{L})$은 \textbf{헤세 행렬 (Hessian matrix)}) \\
+따라서 만약 함수 $\mathcal{L}$이 정의역의 모든 점에서 $\|H(\mathcal{L})(\nabla\mathcal{L})\|\leq M$이라면 조건 $\|\curve^{\prime \prime}\|\leq M$을 만족함을 알 수 있고, 특히 $\|H(\mathcal{L})(\nabla\mathcal{L})\|\leq \|H(\mathcal{L})\|_{op}\|\nabla\mathcal{L}\|$이므로 $\|H(\mathcal{L})\|_{op}, \|\nabla\mathcal{L}\|$이 유계(bounded)라면 조건 $\|\curve^{\prime \prime}\|\leq M$을 만족한다.
+\\\\
+이는 "\ldots 를 만족하는 함수는 \ldots 를 만족한다."라는 서술을 가능하게 해준다. \\
+(기존의 조건인 $\|\curve^{\prime \prime}\|\leq M$은 곡선의 초기값에 따라 변할수도 있는 조건이므로 이러한 서술에 적절하지 않다.)
+
+\end{remark}
+
+
+앞의 정리는 곡선이 수렴하는 점은 임계점임을 말해주지만, 그것이 극소점임을 말해주진 않는다. 	하지만 '좋은' 조건이 주어진다면 그러한 임계점이 극소점임을 알 수 있다.
+
+\begin{definition}
+함수 $f$가 정의역의 임의의 점 $A,B$와 $0\leq \lambda \leq 1$에 대해 \\ $f(\lambda A + (1-\lambda) B) \leq \lambda f(A) + (1-\lambda) f(B)$를 만족시키면 $f$를 \textbf{볼록(convex)함수} 라고 한다.
+\end{definition}
+
+\begin{lemma}
+일변수 일급 함수 $f$가 볼록함수이면 $f^{\prime}$은 단조 증가한다.
+\end{lemma}
+\begin{proof}
+임의의 $a<b$와 $c \in (a,b)$에 대해서 $\lambda=\frac{c-b}{a-b}$로 두면 다음의 부등식을 얻는다.
+\begin{align*}
+f(c)&\leq\frac{c-b}{a-b}f(a)+\frac{a-c}{a-b}f(b) \\
+\frac{f(c)-f(a)}{c-a}&\leq\frac{f(b)-f(a)}{b-a}\leq\frac{f(b)-f(c)}{b-c}
+\end{align*}
+이제 $c$를 $a,b$로 보내면 $f$가 미분 가능이므로 각각 $f^{\prime}(a),f^{\prime}(b)$로 수렴하고, 위의 부등식에 의해 증명이 완료된다.
+$$f^{\prime}(a)\leq\frac{f(b)-f(a)}{b-a}\leq f^{\prime}(b)$$
+
+\end{proof}
+
+\begin{theorem}
+다변수 일급 함수 $f$가 볼록함수이고 $\nabla f(\mathbf{P})=\mathbf{0}$이라면 $f$는 $\mathbf{P}$에서 극소이다.
+\end{theorem}
+\begin{proof}
+임의의 벡터 $\mathbf{v}$에 대해 $g(t)=f(\mathbf{P}+t\mathbf{v})$라고 하자. $f$가 볼록함수이므로 다음이 성립한다.
+\begin{align*}
+g(\lambda a+(1-\lambda) b)&=f(\mathbf{P}+\lambda a\mathbf{v}+(1-\lambda) b\mathbf{v})\\&=f(\lambda(\mathbf{P}+a\mathbf{v})+(1-\lambda)(\mathbf{P}+b\mathbf{v}))\\&\leq\lambda f(\mathbf{P}+a\mathbf{v})+(1-\lambda)f(\mathbf{P}+b\mathbf{v})\\&=\lambda g(a)+(1-\lambda) g(b)
+\end{align*}
+따라서 $g$는 볼록함수이다. 
+$$g^{\prime}(0)=D_{\mathbf{v}}f(\mathbf{P})=\nabla f(\mathbf{P})\cdot\mathbf{v}=0$$
+$g^{\prime}(0)=0$이고 볼록함수이기 때문에 Lemma 3.5.에 의해 $(0,1)$에서 $g^{\prime}\geq 0$이다.
+$f(\mathbf{P}+\mathbf{v})=g(1), f(\mathbf{P})=g(0)$이므로 평균값 정리를 적용하면 증명이 완료된다.
+$$\xi \in (0,1) \qquad f(\mathbf{P}+\mathbf{v})-f(\mathbf{P})=g(1)-g(0)=g^{\prime}(\xi)\geq 0 $$
+\end{proof}
+
+
+Theorem 3.2. Theorem 3.6. 그리고 Remark.에서 다룬 내용들을 종합하면 다음과 같은 정리를 얻는다.
+\begin{theorem}
+$\|H(\mathcal{L})\|_{op}, \|\nabla\mathcal{L}\|$이 유계인 이급 볼록함수 $\mathcal{L}$에서 $\curve$가 수렴한다면, 그 점은 극소점이다.
+\end{theorem}
+
+
+\begin{theorem}
+
+\end{theorem}
+
+
+\section{Conclusion}
+
+\begin{theorem}
+$\|H(\mathcal{L})\|_{op}, \|\nabla\mathcal{L}\|$이 유계인 이급 볼록함수 $\mathcal{L}$에서 극소점이 존재한다면 $\curve$는 $\mathcal{L}$의극소점으로 수렴한다.
+\end{theorem}
+\begin{proof}
+
+\end{proof}
+\begin{corollary}
+컴팩트(compact) 집합 $U$ 위에서 정의된 이급 볼록함수 $\mathcal{L}$에서 극소점이 존재한다면 $\curve$는 $\mathcal{L}$의 극소점으로 수렴한다.
+\end{corollary}
+\begin{proof}
+함수 $\mathcal{L}$이 이급 함수 이였으므로 $\mathcal{L}, \frac{\partial\mathcal{L}}{\partial x_{i}}, \frac{\partial^{2}\mathcal{L}}{\partial x_{i}\partial x_{j}}$은 연속이고,
+연속함수에서 컴팩트 집합의 상은 컴팩트 집합이므로 유계이다. 따라서 $\|H(\mathcal{L})\|_{op}, \|\nabla\mathcal{L}\|$ 또한 유계이므로 Theorem 4.1.에 의해 $\curve$는 $\mathcal{L}$의 극소점으로 수렴한다.
+\end{proof}
+
+
+
+
+\end{document}
