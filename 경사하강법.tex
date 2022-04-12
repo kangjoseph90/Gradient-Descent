@@ -41,14 +41,15 @@
 머신러닝, 수치해석 등 여러 컴퓨팅 분야에서는 어떤 목적함수(objective function)의 함수값을
 최적화(optimization)하는 방법에 대해 연구한다. 이런 최적화 문제에서 대표적인 해결 방법으로 \textbf{경사하강법 (Gradient Descent)}이 제시된다. 
 \\\\
-이 글에서는 경사하강법의 원리와 타탕성을 다변수 해석학을 통해 이해/증명하고, 그에 따른 또다른 방법론을 제시한다.
+이 글에서는 경사하강법의 원리와 타탕성을 다변수 미적분학을 통해 이해/증명한다.
 
 	\subsection{List of special symbols}
 	\begin{tabular}{llll}
 	$\nabla f$ & 기울기 벡터 & $\mathbb{R}$ & 실수 집합 \\ 
 	$\mathbf{0}$ & 영벡터 & $\int_{\mathbf{X}}$ & 선적분 \\
-	$|\cdot |$ & 절댓값 노름 & $\| \cdot \|$ & 벡터 노름 \\
+	$|\cdot |$ & 절댓값 노름 & $\| \cdot \|$ & L2 노름 \\
 	$\| \cdot \|_{op}$ & 행렬 Operator 노름 & $H(f)$ & 헤세 행렬 \\
+	$D_{\mathbf{v}}f$ & $\mathbf{v}$-방향 도함수
 	\end{tabular}
 \\\\
 \section{Method}
@@ -66,7 +67,7 @@ $$\mathbf{X}(0)=\mathbf{X}_{0} \qquad \mathbf{X}(n\alpha)=\mathbf{X}_{n}$$
 $\curve$에 수렴하게 된다.
 $$ \curve(0)=\mathbf{X}_{0} \qquad \curve^{\prime}=-\nabla\mathcal{L}(\curve) $$
 
-선택한 $\alpha$가 아주 작다는 가정 하에, 이 곡선을 관찰함으로써 수열 $\{\mathbf{X}_{n}\}$의 행동을 관찰할 수 있다. 앞으로는 이 곡선을 관찰함으로써 특수한 조건을 만족하는 함수에서는 이 곡선이 함수의 극소점으로 수렴함을 보인다.
+선택한 $\alpha$가 아주 작다는 가정 하에, 이 곡선을 관찰함으로써 수열 $\{\mathbf{X}_{n}\}$의 행동을 관찰할 수 있다. 앞으로는 이 곡선을 관찰함으로써 특수한 조건을 만족하는 함수에서는 이 곡선이 함수의 최소점으로 수렴함을 보인다.
 
 \section{Observation}
 
@@ -83,7 +84,7 @@ $$
 따라서 $\mathcal{L}(\curve(t_{1}))\geq\mathcal{L}(\curve(t_{2}))$ 이다. 
 \end{proof}
 
-이 성질은 곡선 $\curve$를 따라갈 때 함숫값이 줄어든다는 것을 보장해 주지만, 실제로 이 곡선이 함수의 극소점을 찾는것에 도움을 주는가에 대한 
+이 성질은 곡선 $\curve$를 따라갈 때 함숫값이 줄어든다는 것을 보장해 주지만, 실제로 이 곡선이 함수의 최소점을 찾는것에 도움을 주는가에 대한 
 질문에 답하진 못한다. 다음 명제는 일단 곡선이 수렴한다면 임계점으로 수렴하는가에 답하기 위해 떠올린 명제이다.		
 \\\\
 (거짓) 어떤 $\mathbf{P}$에 대해서 $\limit{t}\curve(t)=\mathbf{P}$ 이면 
@@ -164,87 +165,91 @@ $$
 \end{remark}
 
 
-앞의 정리는 곡선이 수렴하는 점은 임계점임을 말해주지만, 그것이 극소점임을 말해주진 않는다. 	하지만 '좋은' 조건이 주어진다면 그러한 임계점이 극소점임을 알 수 있다.
+앞의 정리는 곡선이 수렴하는 점은 임계점임을 말해주지만, 그것이 최소점임을 말해주진 않는다. 	하지만 '좋은' 조건이 주어진다면 그러한 임계점이 최소점임을 알 수 있다.
 
 \newpage
 \begin{definition}
-함수 $f$가 정의역의 임의의 점 $A,B$와 $0\leq \lambda \leq 1$에 대해 \\ $f(\lambda A + (1-\lambda) B) \leq \lambda f(A) + (1-\lambda) f(B)$를 만족시키면 $f$를 \textbf{볼록(convex)함수} 라고 한다.
+함수 $f$가 정의역의 임의의 점 $A,B$와 $0< \lambda < 1$에 대해 \\ $f(\lambda A + (1-\lambda) B) < \lambda f(A) + (1-\lambda) f(B)$를 만족시키면 $f$를 \textbf{강볼록(strictly convex)함수} 라고 한다.
 \end{definition}
 
 \begin{lemma}
-다변수 볼록함수 $f$와 벡터 $\mathbf{P},\mathbf{v}$에 대해 $g(t)=f(\mathbf{P}+t\mathbf{v})$는 볼록함수이다.
+다변수 강볼록함수 $f$와 벡터 $\mathbf{P},\mathbf{v}$에 대해 $g(t)=f(\mathbf{P}+t\mathbf{v})$는 강볼록함수이다.
 \end{lemma}
 \begin{proof}
-임의의 $a<b, 0\leq\lambda\leq 1$에 대해서 
+임의의 $a<b, 0<\lambda< 1$에 대해서 
 \begin{align*}
-g(\lambda a+(1-\lambda) b)&=f(\mathbf{P}+\lambda a\mathbf{v}+(1-\lambda) b\mathbf{v})\\&=f(\lambda(\mathbf{P}+a\mathbf{v})+(1-\lambda)(\mathbf{P}+b\mathbf{v}))\\&\leq\lambda f(\mathbf{P}+a\mathbf{v})+(1-\lambda)f(\mathbf{P}+b\mathbf{v})\\&=\lambda g(a)+(1-\lambda) g(b)
+g(\lambda a+(1-\lambda) b)&=f(\mathbf{P}+\lambda a\mathbf{v}+(1-\lambda) b\mathbf{v})\\&=f(\lambda(\mathbf{P}+a\mathbf{v})+(1-\lambda)(\mathbf{P}+b\mathbf{v}))\\&<\lambda f(\mathbf{P}+a\mathbf{v})+(1-\lambda)f(\mathbf{P}+b\mathbf{v})\\&=\lambda g(a)+(1-\lambda) g(b)
 \end{align*}
-따라서 $g$는 볼록함수이다.
+따라서 $g$는 강볼록함수이다.
 \end{proof}
 
 
 \begin{lemma}
-일변수 일급 함수 $f$가 볼록함수이면 $f^{\prime}$은 단조 증가한다.
+일변수 일급 함수 $f$가 강볼록함수이면 $f^{\prime}$은 증가한다.
 \end{lemma}
 \begin{proof}
 임의의 $a<b$와 $c \in (a,b)$에 대해서 $\lambda=\frac{c-b}{a-b}$로 두면 다음의 부등식을 얻는다.
 \begin{align*}
-f(c)&\leq\frac{c-b}{a-b}f(a)+\frac{a-c}{a-b}f(b) \\
-\frac{f(c)-f(a)}{c-a}&\leq\frac{f(b)-f(a)}{b-a}\leq\frac{f(b)-f(c)}{b-c}
+f(c)&<\frac{c-b}{a-b}f(a)+\frac{a-c}{a-b}f(b) \\
+\frac{f(c)-f(a)}{c-a}&<\frac{f(b)-f(a)}{b-a}<\frac{f(b)-f(c)}{b-c}
 \end{align*}
 이제 $c$를 $a,b$로 보내면 $f$가 미분 가능이므로 각각 $f^{\prime}(a),f^{\prime}(b)$로 수렴하고, 위의 부등식에 의해 증명이 완료된다.
-$$f^{\prime}(a)\leq\frac{f(b)-f(a)}{b-a}\leq f^{\prime}(b)$$
+$$f^{\prime}(a)<\frac{f(b)-f(a)}{b-a}< f^{\prime}(b)$$
 \end{proof}
 
 \newpage
 \begin{theorem}
-다변수 일급 함수 $f$가 볼록함수이면 임의의 벡터 $\mathbf{P},\mathbf{v}$에 대해 $\nabla f(\mathbf{P})\cdot \mathbf{v}=D_{\mathbf{v}}f(\mathbf{P})\leq f(\mathbf{P}+\mathbf{v})-f(\mathbf{P})$이다.
+다변수 일급 함수 $f$가 강볼록함수이면 임의의 벡터 $\mathbf{P},\mathbf{v}$에 대해 $\nabla f(\mathbf{P})\cdot \mathbf{v}=D_{\mathbf{v}}f(\mathbf{P})< f(\mathbf{P}+\mathbf{v})-f(\mathbf{P})$이다.
 \end{theorem}
 \begin{proof}
 Lemma 3.5. 에 의해 $g(t)=f(\mathbf{P}+t\mathbf{v})$가 볼록함수 임을 알고, 위의 부등식에 의해 다음이 성립하므로 증명이 완료된다.
 $$
-D_{\mathbf{v}}f(P)=g^{\prime}(0)\leq\frac{g(1)-g(0)}{1-0}=f(\mathbf{P}+\mathbf{v})-f(\mathbf{P})
+D_{\mathbf{v}}f(P)=g^{\prime}(0)<\frac{g(1)-g(0)}{1-0}=f(\mathbf{P}+\mathbf{v})-f(\mathbf{P})
 $$
 \end{proof}
 
 \begin{corollary}
-다변수 일급 함수 $f$가 볼록함수이고 $\nabla f(\mathbf{P})=\mathbf{0}$이라면 $f$는 $\mathbf{P}$에서 극소이다.
+다변수 일급 함수 $f$가 강볼록함수이고 $\nabla f(\mathbf{P})=\mathbf{0}$이라면 $f$는 $\mathbf{P}$에서 유일하게 최소이다.
 \end{corollary}
 \begin{proof}
 임의의 벡터 $\mathbf{v}$에 대해 $g(t)=f(\mathbf{P}+t\mathbf{v})$라고 하자. 
 \begin{align*}
-\nabla f(\mathbf{P})\cdot\mathbf{v}=0&\leq f(\mathbf{P}+\mathbf{v})-f(\mathbf{P}) \\ f(\mathbf{P})&\leq f(\mathbf{P}+\mathbf{v})
+\nabla f(\mathbf{P})\cdot\mathbf{v}=0&< f(\mathbf{P}+\mathbf{v})-f(\mathbf{P}) \\ f(\mathbf{P})&< f(\mathbf{P}+\mathbf{v})
 \end{align*}
-이므로 f는 $\mathbf{P}$에서 극소이다.
+이므로 f는 $\mathbf{P}$에서 최소이고, 유일하다.
 \end{proof}
 
 
-Theorem 3.2. Corollary 3.7.1. 그리고 Remark.에서 다룬 내용들을 종합하면 다음과 같은 정리를 얻는다.
 \begin{theorem}
-$\|H(\mathcal{L})\|_{op}, \|\nabla\mathcal{L}\|$이 유계인 이급 볼록함수 $\mathcal{L}$에서 $\curve$가 수렴한다면, 그 점은 극소점이다.
+$\|H(\mathcal{L})\|_{op}, \|\nabla\mathcal{L}\|$이 유계인 이급 강볼록함수 $\mathcal{L}$에서 최소점 $\mathbf{P}$가 존재한다면, $\curve$는 $\mathbf{P}$로 수렴한다.
 \end{theorem}
 
-
-\begin{theorem}
-
-\end{theorem}
+\begin{proof}
+Theorem 3.1. 에 의해 $\mathcal{L}(\curve(t))$는 단조 감소함을 알고, 최소점이 존재하므로 아래로 유계이다. 따라서 단조 수렴 정리에 의해 $\mathcal{L}(\curve(t))$이 수렴함을 안다. $\mathcal{L}(\curve(t))$를 $t$에 대해 미분해 보면 다음과 같다.
+\begin{align*}
+\frac{d\mathcal{L}}{dt}&=\nabla\mathcal{L}\cdot\curve^{\prime} = -(\nabla\mathcal{L})^{2}\\
+\frac{d^2\mathcal{L}}{dt^2}&=-2(\nabla\mathcal{L})\cdot(H(\mathcal{L})(\curve^{\prime}))=2(\nabla\mathcal{L})\cdot(H(\mathcal{L})(\nabla\mathcal{L}))
+\end{align*}
+$\|H(\mathcal{L})\|_{op}, \|\nabla\mathcal{L}\|$이 유계였으므로 $\frac{d^2\mathcal{L}}{dt^2}$도 유계이므로 
+\\
+Lemma 3.3. 에 의해 $\limit{t}\nabla\mathcal{L}(\curve(t))=0$이고 $\nabla\mathcal{L}(\mathbf{P})=0$인 $\mathbf{P}$는 유일하므로 $\curve(t)$는 P로 수렴한다.
+\end{proof}
 
 
 \section{Conclusion}
 
-\begin{theorem}
-$\|H(\mathcal{L})\|_{op}, \|\nabla\mathcal{L}\|$이 유계인 이급 볼록함수 $\mathcal{L}$에서 극소점이 존재한다면 $\curve$는 $\mathcal{L}$의극소점으로 수렴한다.
-\end{theorem}
-\begin{proof}
+최종적으로 곡선 $\curve$는 $\mathcal{L}$의 특정한 조건 하에 최소점으로 수렴함을 보였다. \\
+다음 정리는 조금 더 적용하기 쉬운 형태이다.
 
-\end{proof}
 \begin{corollary}
-컴팩트(compact) 집합 $U$ 위에서 정의된 이급 볼록함수 $\mathcal{L}$에서 극소점이 존재한다면 $\curve$는 $\mathcal{L}$의 극소점으로 수렴한다.
+컴팩트(compact) 집합 $U$ 위에서 정의된 이급 강볼록함수 $\mathcal{L}$에서 최소점이 존재한다면 $\curve$는 $\mathcal{L}$의 최소점으로 수렴한다.
 \end{corollary}
 \begin{proof}
 함수 $\mathcal{L}$이 이급 함수 이였으므로 $\mathcal{L}, \frac{\partial\mathcal{L}}{\partial x_{i}}, \frac{\partial^{2}\mathcal{L}}{\partial x_{i}\partial x_{j}}$은 연속이고,
-연속함수에서 컴팩트 집합의 상은 컴팩트 집합이므로 유계이다. 따라서 $\|H(\mathcal{L})\|_{op}, \|\nabla\mathcal{L}\|$ 또한 유계이므로 Theorem 4.1.에 의해 $\curve$는 $\mathcal{L}$의 극소점으로 수렴한다.
+연속함수에서 컴팩트 집합의 상은 컴팩트 집합이므로 유계이다. 따라서 $\|H(\mathcal{L})\|_{op}, \|\nabla\mathcal{L}\|$ 또한 유계이므로 Theorem 4.1.에 의해 $\curve$는 $\mathcal{L}$의 최소점으로 수렴한다.
 \end{proof}
+
+$\mathbb{R}^{n}$위에서 컴팩트 집합은 유계이면서 닫힌 집합을 의미하므로 간단하게 적용될 수 있다.
 
 
 
